@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { randomUUID } from 'node:crypto'
@@ -18,6 +19,10 @@ export async function transactionsRoutes(app: FastifyInstance) {
             title,
             amount: type === 'credit' ? amount : amount * -1,
         })
+
+        // Limitação do query builder -> não tem inteligencia de sugerir quais campos existem no BD
+        // utilizar ORM - automatiza BD
+
         // HTTP Codes ()
         // 201 recurso criado com sucesso
 
