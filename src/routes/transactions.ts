@@ -3,6 +3,9 @@ import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { randomUUID } from 'node:crypto'
 import { knex } from '../database'
+
+// Cookies -> formas de manter contexto entre requisições
+
 export async function transactionsRoutes(app: FastifyInstance) {
     app.get('/', async () => {
         const transactions = await knex('transactions').select()
@@ -39,10 +42,21 @@ export async function transactionsRoutes(app: FastifyInstance) {
         const { title, amount, type } = createTransactionBodySchema.parse(
             request.body,
         )
+        let sessionId = request.cookies.sessionId
+
+        if (!sessionId) {
+            sessionId = randomUUID()
+            reply.cookie('sessionId', sessionId, {
+                path: '/',
+                maxAge: 60 * 60 * 24 * 7, // 7 days
+            })
+        }
+
         await knex('transactions').insert({
             id: randomUUID(),
             title,
             amount: type === 'credit' ? amount : amount * -1,
+            session_id: sessionId
         })
 
         // Limitação do query builder -> não tem inteligencia de sugerir quais campos existem no BD
