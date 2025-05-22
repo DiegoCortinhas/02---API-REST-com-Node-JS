@@ -1,5 +1,13 @@
-import 'dotenv/config'
+/* eslint-disable prettier/prettier */
+// import 'dotenv/config'
+import { config } from 'dotenv'
 import { z } from 'zod'
+
+if (process.env.NODE_ENV === 'test') {
+    config({ path: '.env.test' })
+} else {
+    config()
+}
 
 // dentro de NODE_ENV - colocar os ambientes mais comuns das apps estarem rodando - development, test ou production
 // process.env.DATABASE_URL -> acessar as propriedades dessa forma
